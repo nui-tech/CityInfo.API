@@ -21,7 +21,6 @@ namespace CityInfo.API.Controllers
         }
 
 
-
         [HttpGet("{cityId}/pointsofinterest/{id}", Name = "GetPointOfInterest")]
         public IActionResult GetPointOfInterest(int cityId, int id)
         {
@@ -33,6 +32,7 @@ namespace CityInfo.API.Controllers
 
             return Ok(pointOfInterest);
         }
+
 
         [HttpPost("{cityId}/pointsofinterest")]
         public IActionResult CreatePointOfInterest(int cityId, [FromBody] PointOfInterestForCreationDto pontOfInterest)
@@ -113,9 +113,19 @@ namespace CityInfo.API.Controllers
         }
 
 
+        [HttpDelete("{cityId}/pointsofinterest/{id}")]
+        public IActionResult DeletePointOfInterest(int cityId, int id)
+        {
+            var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null) return NotFound();
 
+            var pointOfInterestFromStore = city.PointsOfInterest.FirstOrDefault(p => p.Id == id);
+            if (pointOfInterestFromStore == null) return NotFound();
 
+            city.PointsOfInterest.Remove(pointOfInterestFromStore);
 
+            return NoContent();
+        }
 
 
     }
