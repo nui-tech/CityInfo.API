@@ -1,23 +1,17 @@
 ﻿using CityInfo.API.Models;
-using CityInfo.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CityInfo.API.Controllers
 {
-    [Route("api/cities")]
+    [Route("api/cities/")]
     public class PointsOfInterestController : Controller
     {
 
-        private IMailService _mailService;
-
-        public PointsOfInterestController(LocalMailService mailService)
+        public PointsOfInterestController()
         {
-            _mailService = mailService;
+
         }
 
         [HttpGet("{cityId}/pointsofinterest")]
@@ -111,7 +105,7 @@ namespace CityInfo.API.Controllers
 
             if (!ModelState.IsValid) return BadRequest();
             if (pointOfInterestToPatch.Description == pointOfInterestToPatch.Name)
-                    ModelState.AddModelError("Description", "The provided description should be different from the name");
+                ModelState.AddModelError("Description", "The provided description should be different from the name");
             TryValidateModel(pointOfInterestToPatch);  //recheck validation again after patch to the model
 
             pointOfInterestFromStore.Name = pointOfInterestToPatch.Name;
@@ -132,9 +126,6 @@ namespace CityInfo.API.Controllers
             if (pointOfInterestFromStore == null) return NotFound();
 
             city.PointsOfInterest.Remove(pointOfInterestFromStore);
-
-            _mailService.Send("Point of interest deleted.", $"Point of interest {pointOfInterestFromStore.Name} with id {pointOfInterestFromStore.Id} was deleted.");
-
             return NoContent();
         }
 
